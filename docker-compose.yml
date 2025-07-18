@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:17.5-bookworm
+    shm_size: 512mb
+    env_file:
+      - ./dev/container.env
+    environment:
+      PGDATA: /var/lib/postgresql/17/docker
+    volumes:
+      - pgdata:/var/lib/postgresql/17/docker
+    configs:
+      - source: pg-db
+        target: /docker-entrypoint-initdb.d/00-init-database.sh
+      - source: pg-schema
+        target: /docker-entrypoint-initdb.d/01-init-schema.sh
+    ports:
+      - 5432:5432
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+configs:
+  pg-db:
+    file: dist/00-init-database.sh
+  pg-schema:
+    file: dist/01-init-schema.sh
+volumes:
+  pgdata:
+    labels:
+      - "com.mozilla.team=IAM"
+      - "com.mozilla.name=cis-postgres"
+      - "com.mozilla.experiment=yes"
