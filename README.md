@@ -61,3 +61,27 @@ FROM profiles
 ORDER BY profile_length DESC
 LIMIT 10;
 ```
+
+Run the query that the HRIS sync job is having trouble with:
+
+```
+SELECT connection_username, profile
+FROM profiles
+WHERE
+        connection_username ^@ 'ad|'
+    AND profile['active']['value']::boolean = true;
+```
+
+Get profiles on the People Directory which include a link, excluding LDAP
+peeps:
+
+```
+SELECT connection_username, profile #>> '{primary_username,value}' AS pmo_username
+FROM profiles
+WHERE
+        (
+                profile['description']['value']::text LIKE '%http://%'
+            OR profile['description']['value']::text LIKE '%https://%'
+        )
+    AND NOT (connection_username ^@ 'ad|');
+```
