@@ -22,9 +22,9 @@ services:
       - 8080:8080
 configs:
   pg-db:
-    file: dist/00-init-database.sh
+    file: db/00-init-database.sh
   pg-schema:
-    file: dist/01-init-schema.sh
+    file: db/01-init-schema.sh
 volumes:
   pgdata:
     labels:
