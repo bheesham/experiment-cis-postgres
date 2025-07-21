@@ -85,3 +85,12 @@ WHERE
         )
     AND NOT (connection_username ^@ 'ad|');
 ```
+
+Get members of the `nda` group:
+
+```
+SELECT p.connection_username, p.profile #>> '{primary_email,value}'
+FROM profiles AS p
+JOIN profiles_splat_group_names AS psgn ON p.connection_username = psgn.connection_username
+WHERE psgn.group_name = 'nda';
+```
